@@ -13,10 +13,6 @@ function Form(props) {
     else setPerson({ name: value, job: person["job"] });
     }
 
-    function updateList(person) {
-    setCharacters([...characters, person]);
-    }
-
     function submitForm() {
         props.handleSubmit(person);
         setPerson({ name: "", job: "" });
