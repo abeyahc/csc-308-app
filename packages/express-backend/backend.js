@@ -16,6 +16,12 @@ const users = {
 app.use(express.json());
 
 // Helpers
+const findUserByName = (name) => {
+    return users["users_list"].filter(
+      (user) => user["name"] === name
+    );
+  };
+
 const findUserById = (id) =>
   users.users_list.find((user) => user.id === id);
 
@@ -34,6 +40,17 @@ const deleteUserById = (id) => {
 // --- Routes ---
 
 // Get a single user by id
+app.get("/users", (req, res) => {
+    const name = req.query.name;
+    if (name != undefined) {
+      let result = findUserByName(name);
+      result = { users_list: result };
+      res.send(result);
+    } else {
+      res.send(users);
+    }
+  });
+  
 app.get("/users/:id", (req, res) => {
   const id = req.params.id;
   const result = findUserById(id);
