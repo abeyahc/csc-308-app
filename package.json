@@ -21,8 +21,5 @@
   "homepage": "https://github.com/abeyahc/csc-308-app#readme",
   "workspaces": [
     "packages/*"
-  ],
-  "devDependencies": {
-    "nodemon": "^3.1.10"
-  }
+  ]
 }
