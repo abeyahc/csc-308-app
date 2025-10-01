@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 
 const app = express();
 const port = 8000;
@@ -13,8 +14,6 @@ const users = {
   ]
 };
 
-app.use(express.json());
-
 // Helpers
 const findUserByName = (name) => {
     return users["users_list"].filter(
@@ -25,17 +24,15 @@ const findUserByName = (name) => {
 const findUserById = (id) =>
   users.users_list.find((user) => user.id === id);
 
-const addUser = (user) => {
-  users.users_list.push(user);
-  return user;
-};
-
 const deleteUserById = (id) => {
   const idx = users.users_list.findIndex((u) => u.id === id);
   if (idx === -1) return false;
   users.users_list.splice(idx, 1);
   return true;
 };
+
+app.use(cors());
+app.use(express.json());
 
 // --- Routes ---
 
@@ -72,13 +69,13 @@ app.get("/", (req, res) => {
   });
   
 
-// Create user
-app.post("/users", (req, res) => {
-  const userToAdd = req.body;
-  addUser(userToAdd);
-  // 201 Created with the new resource is a nice touch
-  res.status(201).send(userToAdd);
-});
+// // Create user
+// app.post("/users", (req, res) => {
+//   const userToAdd = req.body;
+//   addUser(userToAdd);
+//   // 201 Created with the new resource is a nice touch
+//   res.status(201).send(userToAdd);
+// });
 
 // Hard delete user by id
 app.delete("/users/:id", (req, res) => {
