@@ -9,7 +9,7 @@ function fetchUsers() {
 }
 
 function postUser(person) {
-  const promise = fetch("Http://localhost:8000/users", {
+  const promise = fetch("http://localhost:8000/users", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -20,22 +20,38 @@ function postUser(person) {
   return promise;
 }
 
+function deleteUser(id) {
+  const promise = fetch(`http://localhost:8000/users/${id}`, { 
+    method: "DELETE"
+  });
+  return promise;
+}
+
 function MyApp() {
   const [characters, setCharacters] = useState([]);
 
-  function removeOneCharacter(index) {
-    const updated = characters.filter((character, i) => {
-      return i !== index;
-    });
-    setCharacters(updated);
+  function removeOneCharacter(id) {
+    deleteUser(id)
+      .then((res) => {
+      if (res.status === 204) {
+        setCharacters((prev) => prev.filter((c) => c.id !== id));
+      } else if (res.status === 404) {
+        console.error("User not found");
+      }
+    })
+    .catch(console.error);
   }
 
   function updateList(person) {
     postUser(person)
-    .then(() => setCharacters([...characters, person]))
-    .catch((error) => {
-      console.log(error);
-    })
+      .then(async (res) => {
+        if (res.status !== 201) {
+          throw new Error(`Expected 201, got ${res.status}`);
+        }
+        const created = await res.json(); // includes server-generated id
+        setCharacters((prev) => [...prev, created]);
+      })
+      .catch(console.error);
   }
 
   useEffect(() => {

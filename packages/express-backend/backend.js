@@ -82,9 +82,9 @@ app.get("/", (req, res) => {
 // Create user
 app.post("/users", (req, res) => {
   const userToAdd = req.body;
-  addUser(userToAdd);
-  // 201 Created with the new resource is a nice touch
-  res.status(201).send(userToAdd);
+  const newUser = addUser(userToAdd)
+  // return 201 status yippee
+  res.status(201).send(newUser);
 });
 
 // Hard delete user by id
