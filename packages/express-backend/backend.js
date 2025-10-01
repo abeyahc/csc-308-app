@@ -21,6 +21,17 @@ const findUserByName = (name) => {
     );
   };
 
+  const addUser = (user) => {
+    // Ensure the new user has a unique id
+    if (!user.id) {
+    // generate random id
+      user.id = Math.random().toString(36).substr(2, 6);
+    }
+  
+    users.users_list.push(user);
+    return user;
+  };
+
 const findUserById = (id) =>
   users.users_list.find((user) => user.id === id);
 
@@ -67,15 +78,14 @@ app.get("/", (req, res) => {
       ]
     });
   });
-  
 
-// // Create user
-// app.post("/users", (req, res) => {
-//   const userToAdd = req.body;
-//   addUser(userToAdd);
-//   // 201 Created with the new resource is a nice touch
-//   res.status(201).send(userToAdd);
-// });
+// Create user
+app.post("/users", (req, res) => {
+  const userToAdd = req.body;
+  addUser(userToAdd);
+  // 201 Created with the new resource is a nice touch
+  res.status(201).send(userToAdd);
+});
 
 // Hard delete user by id
 app.delete("/users/:id", (req, res) => {
