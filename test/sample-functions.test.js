@@ -81,3 +81,9 @@ test('Test empty string -- success', () => {
     const result = myFunctions.containsNumbers("");
     expect(result).toBe(target);
 })
+
+test('Test with not a string -- success', () => {
+    const target = false;
+    const result = myFunctions.containsNumbers(321);
+    expect(result).toBe(target)
+})
