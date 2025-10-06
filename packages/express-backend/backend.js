@@ -81,7 +81,7 @@ app.get("/", (req, res) => {
 
 // Create user
 app.post("/users", (req, res) => {
-  const userToAdd = req.body;
+  const userToAdd = req.body;           
   const newUser = addUser(userToAdd)
   // return 201 status yippee
   res.status(201).send(newUser);
