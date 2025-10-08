@@ -64,4 +64,8 @@ class Portfolio {
     }
 }
 
+/* Testing with the TDD was useful, I was able to catch mistakes and debug lots of my code along the way.
+TDD Practice was useful for being able to catch edge-cases and being able to refine my code to cause less bugs.
+*/
+
 module.exports = Portfolio;
