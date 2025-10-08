@@ -140,3 +140,51 @@ test('sale subtracts shares from an existing symbol', () => {
     expect(p.holdings).toEqual({ RBLX: 5, AAPL: 7 });
   });
   
+  test('Check if count works -- success', () => {
+    const p = new Portfolio();
+    const target = 0
+    const result = p.count()
+    expect(result).toEqual(target)
+  })
+
+  test('Check if count works -- success', () => {
+    const p = new Portfolio();
+    p.holdings = {"YES": 1}
+    const target = 1
+    const result = p.count()
+    expect(result).toEqual(target)
+  })
+
+  test('Check if count works with two companies -- success', () => {
+    const p = new Portfolio();
+    p.holdings = {"YES": 10, "HBS": 3}
+    const target = 2
+    const result = p.count()
+    expect(result).toEqual(target)
+  })
+
+  test('Check if stock has 0 shares if not fail -- success', () => {
+    const p = new Portfolio();
+    p.holdings = {"YES": 10, "HBS": 3}
+    const target = 2
+    const result = p.count()
+    expect(result).toEqual(target)
+  })
+
+  test('sharesOf returns 0 for unknown symbol', () => {
+    const p = new Portfolio();
+    expect(p.sharesOf('AAPL')).toBe(0);
+  });
+  
+  test('sharesOf returns the correct count for existing symbol', () => {
+    const p = new Portfolio();
+    p.buy('RBLX', 5);
+    expect(p.sharesOf('RBLX')).toBe(5);
+  });
+  
+  test('sharesOf handles whitespace and case-insensitive symbols', () => {
+    const p = new Portfolio();
+    p.buy('rblx', 3);
+    expect(p.sharesOf('  RBLX  ')).toBe(3);
+  });
+  

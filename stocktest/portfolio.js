@@ -48,6 +48,20 @@ class Portfolio {
             delete this.holdings[key];
         }
     }
+
+    count() {
+        const count_keys = Object.keys(this.holdings).length;
+        return count_keys
+    }
+
+    sharesOf(symbol) {
+        const key = symbol ? symbol.trim().toUpperCase() : "";
+        if (!key || !(key in this.holdings)) {
+            return 0
+        }
+        const count_shares = this.holdings[key]
+        return count_shares
+    }
 }
 
 module.exports = Portfolio;
