@@ -20,7 +20,33 @@ class Portfolio {
         else {
             this.holdings[key] = shares;
         }
+    }
+    
+    sale(symbol, shares) {
+        const key = symbol ? symbol.trim().toUpperCase() : "";
 
+        if (!key || shares <= 0) {
+            throw new Error("Invalid");
+        }
+
+        if (!this.holdings[key]) {
+            throw new Error("You do not own any of this share");
+        }
+
+        if (this.holdings[key] < shares) {
+            throw new Error("Not possible to sell this number of shares.");
+        }
+
+        if (this.holdings[key]) {
+            this.holdings[key] -= shares;
+        }
+        else {
+            this.holdings[key] 
+        }
+
+        if (this.holdings[key] === 0) {
+            delete this.holdings[key];
+        }
     }
 }
 

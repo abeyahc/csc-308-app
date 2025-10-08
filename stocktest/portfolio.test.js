@@ -70,3 +70,73 @@ test('Testing fail for a symbol that doesnt exist -- success', () => {
     const target = {};
     expect(result).toEqual(target);
 });
+
+test('sale subtracts shares from an existing symbol', () => {
+    const p = new Portfolio();
+    p.holdings = { RBLX: 10 };
+    p.sale('RBLX', 4);
+    expect(p.holdings).toEqual({ RBLX: 6 });
+  });
+  
+  test('sale removes symbol when shares drop to zero', () => {
+    const p = new Portfolio();
+    p.holdings = { RBLX: 5 };
+    p.sale('RBLX', 5);
+    expect(p.holdings).toEqual({});
+  });
+  
+  test('sale is case-insensitive for symbol', () => {
+    const p = new Portfolio();
+    p.holdings = { RBLX: 7 };
+    p.sale('rblx', 2);
+    expect(p.holdings).toEqual({ RBLX: 5 });
+  });
+  
+  test('sale throws when selling more than owned (oversell)', () => {
+    const p = new Portfolio();
+    p.holdings = { RBLX: 3 };
+    expect(() => p.sale('RBLX', 4)).toThrow('Not possible to sell this number of shares.');
+    expect(p.holdings).toEqual({ RBLX: 3 });
+  });
+  
+  test("sale throws when symbol isn't owned", () => {
+    const p = new Portfolio();
+    p.holdings = { AAPL: 2 };
+    expect(() => p.sale('RBLX', 1)).toThrow("You do not own any of this share");
+    expect(p.holdings).toEqual({ AAPL: 2 });
+  });
+  
+  test('sale throws on invalid shares (<= 0)', () => {
+    const p = new Portfolio();
+    p.holdings = { RBLX: 5 };
+    expect(() => p.sale('RBLX', 0)).toThrow('Invalid');
+    expect(() => p.sale('RBLX', -1)).toThrow('Invalid');
+    // unchanged
+    expect(p.holdings).toEqual({ RBLX: 5 });
+  });
+  
+  test('sale throws on invalid/blank symbol', () => {
+    const p = new Portfolio();
+    p.holdings = { RBLX: 5 };
+    expect(() => p.sale('', 1)).toThrow('Invalid');
+    expect(() => p.sale('   ', 1)).toThrow('Invalid');
+    expect(p.holdings).toEqual({ RBLX: 5 });
+  });
+  
+  test('sequence: buy then sale updates correctly and removes at zero', () => {
+    const p = new Portfolio();
+    p.buy('RBLX', 3);
+    p.buy('RBLX', 2);
+    p.sale('RBLX', 1); 
+    expect(p.holdings).toEqual({ RBLX: 4 });
+    p.sale('RBLX', 4);      
+    expect(p.holdings).toEqual({});
+  });
+  
+  test('multiple symbols: sale only affects the targeted one', () => {
+    const p = new Portfolio();
+    p.holdings = { RBLX: 5, AAPL: 10 };
+    p.sale('AAPL', 3);
+    expect(p.holdings).toEqual({ RBLX: 5, AAPL: 7 });
+  });
+  
