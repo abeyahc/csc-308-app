@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "dev": "npm run dev --workspace react-frontend",
+    "dev": "npm run dev --workspace react-frontend express-backend",
     "build": "npm run build --workspace react-frontend",
     "preview": "npm run preview --workspace react-frontend"
   },

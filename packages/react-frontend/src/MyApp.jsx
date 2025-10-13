@@ -2,33 +2,34 @@
 import React, {useState, useEffect} from "react";
 import Table from "./Table";
 import Form from "./Form";
-
-function fetchUsers() {
-  const promise = fetch("http://localhost:8000/users");
-  return promise;
-}
-
-function postUser(person) {
-  const promise = fetch("http://localhost:8000/users", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(person),
-  });
-
-  return promise;
-}
-
-function deleteUser(id) {
-  const promise = fetch(`http://localhost:8000/users/${id}`, { 
-    method: "DELETE"
-  });
-  return promise;
-}
+import { jest } from "globals";
 
 function MyApp() {
   const [characters, setCharacters] = useState([]);
+
+  function fetchUsers() {
+    const promise = fetch("http://localhost:8000/users");
+    return promise;
+  }
+  
+  function postUser(person) {
+    const promise = fetch("http://localhost:8000/users", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(person),
+    });
+  
+    return promise;
+  }
+  
+  function deleteUser(id) {
+    const promise = fetch(`http://localhost:8000/users/${id}`, { 
+      method: "DELETE"
+    });
+    return promise;
+  }
 
   function removeOneCharacter(id) {
     deleteUser(id)
@@ -44,20 +45,20 @@ function MyApp() {
 
   function updateList(person) {
     postUser(person)
-      .then(async (res) => {
+      .then((res) => {
         if (res.status !== 201) {
           throw new Error(`Expected 201, got ${res.status}`);
         }
-        const created = await res.json(); // includes server-generated id
-        setCharacters((prev) => [...prev, created]);
+        return res.json(); // includes server-generated id
       })
+      .then((json) => setCharacters([...characters, json]))
       .catch(console.error);
   }
 
   useEffect(() => {
     fetchUsers()
       .then((res) => res.json())
-      .then((json) => setCharacters(json["users_list"]))
+      .then((json) => setCharacters(json.users_list || json))
       .catch((error) => { console.log(error); });
   }, [] );
 
