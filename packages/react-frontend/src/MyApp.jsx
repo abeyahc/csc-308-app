@@ -2,7 +2,6 @@
 import React, {useState, useEffect} from "react";
 import Table from "./Table";
 import Form from "./Form";
-import { jest } from "globals";
 
 function MyApp() {
   const [characters, setCharacters] = useState([]);
@@ -35,7 +34,7 @@ function MyApp() {
     deleteUser(id)
       .then((res) => {
       if (res.status === 204) {
-        setCharacters((prev) => prev.filter((c) => c.id !== id));
+        setCharacters((prev) => prev.filter((c) => c._id !== id));
       } else if (res.status === 404) {
         console.error("User not found");
       }
