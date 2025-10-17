@@ -1,69 +1,74 @@
 import express from "express";
 import cors from "cors";
+import userServices from "./user-services.js";
 
 const app = express();
 const port = 8000;
-
-const users = {
-  users_list: [
-    { id: "xyz789", name: "Charlie", job: "Janitor" },
-    { id: "abc123", name: "Mac", job: "Bouncer" },
-    { id: "ppp222", name: "Mac", job: "Professor" },
-    { id: "yat999", name: "Dee", job: "Aspring actress" },
-    { id: "zap555", name: "Dennis", job: "Bartender" }
-  ]
-};
-
-// Helpers
-const findUserByName = (name) => {
-    return users["users_list"].filter(
-      (user) => user["name"] === name
-    );
-  };
-
-  const addUser = (user) => {
-    // Ensure the new user has a unique id
-    if (!user.id) {
-    // generate random id
-      user.id = Math.random().toString(36).substr(2, 6);
-    }
-  
-    users.users_list.push(user);
-    return user;
-  };
-
-const findUserById = (id) =>
-  users.users_list.find((user) => user.id === id);
-
-const deleteUserById = (id) => {
-  const idx = users.users_list.findIndex((u) => u.id === id);
-  if (idx === -1) return false;
-  users.users_list.splice(idx, 1);
-  return true;
-};
 
 app.use(cors());
 app.use(express.json());
 
 // --- Routes ---
 
-// Get a single user by id
-app.get("/users", (req, res) => {
-    const name = req.query.name;
-    if (name != undefined) {
-      let result = findUserByName(name);
-      result = { users_list: result };
-      res.send(result);
-    } else {
-      res.send(users);
-    }
-  });
+app.get("/users", async (req, res) => {
+  try {
+    const { name, job } = req.query;
+    const users = await userServices.getUsers(name, job);
+    res.json({ users_list: users });
+  } catch (err) {
+    console.error("Error fetching users:", err);
+    res.status(500).json({ error: "Failed to fetch users" });
+  }
+});
 
-app.get("/users/:id", (req, res) => {
-  const id = req.params.id;
-  const result = findUserById(id);
-  if (!result) return res.status(404).send("Resource not found.");
-  res.send(result);
+app.get("/users/name/:name/job/:job", async (req, res) => {
+  try {
+    const { name, job } = req.params; // ✅ extract name and job from URL
+    const users = await userServices.findUserbyNameandJob(name, job);
+
+    if (!users.length) {
+      return res.status(404).json({ error: "No users found matching name and job" });
+    }
+
+    res.json({ users_list: users });
+  } catch (err) {
+    console.error("Error fetching users by name and job:", err);
+    res.status(500).json({ error: "Failed to fetch users" });
+  }
+});
+
+app.get("/users/name/:name", async (req, res) => {
+  try {
+    const user = await userServices.findUserByName(req.params.name);
+    if (!user) return res.status(404).json({ error: "User not found" });
+    res.json(user);
+  } catch (err) {
+    console.error("Error fetching user by Name:", err);
+    res.status(500).json({ error: "Failed to fetch user" });
+  }
+});
+
+
+app.get("/users/job/:job", async (req, res) => {
+  try {
+    const user = await userServices.findUserByJob(req.params.job);
+    if (!user) return res.status(404).json({ error: "User not found" });
+    res.json(user);
+  } catch (err) {
+    console.error("Error fetching user by Job:", err);
+    res.status(500).json({ error: "Failed to fetch user" });
+  }
+});
+
+app.get("/users/:id", async (req, res) => {
+  try {
+    const user = await userServices.findUserById(req.params.id);
+    if (!user) return res.status(404).json({ error: "User not found" });
+    res.json(user);
+  } catch (err) {
+    console.error("Error fetching user by ID:", err);
+    res.status(500).json({ error: "Failed to fetch user" });
+  }
 });
 
 app.get("/", (req, res) => {
@@ -80,17 +85,21 @@ app.get("/", (req, res) => {
   });
 
 // Create user
-app.post("/users", (req, res) => {
+app.post("/users", async (req, res) => {
+  try {
   const userToAdd = req.body;           
-  const newUser = addUser(userToAdd)
-  // return 201 status yippee
+  const newUser = await userServices.addUser(userToAdd)
   res.status(201).send(newUser);
+  // return 201 status yippee
+  } catch (err) {
+    res.status(400).send({error: err.message});
+  }
 });
 
 // Hard delete user by id
-app.delete("/users/:id", (req, res) => {
+app.delete("/users/:id", async (req, res) => {
   const id = req.params.id;
-  const removed = deleteUserById(id);
+  const removed = await userServices.deleteUserById(id);
   if (!removed) return res.status(404).send("Resource not found.");
   // 204 No Content is standard for successful DELETE with no body
   res.status(204).send();

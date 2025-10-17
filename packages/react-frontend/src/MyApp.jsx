@@ -3,38 +3,38 @@ import React, {useState, useEffect} from "react";
 import Table from "./Table";
 import Form from "./Form";
 
-function fetchUsers() {
-  const promise = fetch("http://localhost:8000/users");
-  return promise;
-}
-
-function postUser(person) {
-  const promise = fetch("http://localhost:8000/users", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(person),
-  });
-
-  return promise;
-}
-
-function deleteUser(id) {
-  const promise = fetch(`http://localhost:8000/users/${id}`, { 
-    method: "DELETE"
-  });
-  return promise;
-}
-
 function MyApp() {
   const [characters, setCharacters] = useState([]);
+
+  function fetchUsers() {
+    const promise = fetch("http://localhost:8000/users");
+    return promise;
+  }
+  
+  function postUser(person) {
+    const promise = fetch("http://localhost:8000/users", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(person),
+    });
+  
+    return promise;
+  }
+  
+  function deleteUser(id) {
+    const promise = fetch(`http://localhost:8000/users/${id}`, { 
+      method: "DELETE"
+    });
+    return promise;
+  }
 
   function removeOneCharacter(id) {
     deleteUser(id)
       .then((res) => {
       if (res.status === 204) {
-        setCharacters((prev) => prev.filter((c) => c.id !== id));
+        setCharacters((prev) => prev.filter((c) => c._id !== id));
       } else if (res.status === 404) {
         console.error("User not found");
       }
