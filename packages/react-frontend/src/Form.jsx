@@ -20,7 +20,7 @@ function Form(props) {
 
     return (
     <form>
-    <label htmlFor="name">Name</label>
+    <label htmlForm="name">Name</label>
     <input
       type="text"
       name="name"
@@ -28,7 +28,7 @@ function Form(props) {
       value={person.name}
       onChange={handleChange}
     />
-    <label htmlFor="job">Job</label>
+    <label htmlForm="job">Job</label>
     <input
       type="text"
       name="job"

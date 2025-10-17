@@ -44,20 +44,20 @@ function MyApp() {
 
   function updateList(person) {
     postUser(person)
-      .then(async (res) => {
+      .then((res) => {
         if (res.status !== 201) {
           throw new Error(`Expected 201, got ${res.status}`);
         }
-        const created = await res.json(); // includes server-generated id
-        setCharacters((prev) => [...prev, created]);
+        return res.json(); // includes server-generated id
       })
+      .then((json) => setCharacters([...characters, json]))
       .catch(console.error);
   }
 
   useEffect(() => {
     fetchUsers()
       .then((res) => res.json())
-      .then((json) => setCharacters(json["users_list"]))
+      .then((json) => setCharacters(json.users_list || json))
       .catch((error) => { console.log(error); });
   }, [] );
 
